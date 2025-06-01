@@ -1,17 +1,39 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage'; // Import your LoginPage
-// import other pages here as you create them
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import MemberDashboard from './pages/MemberDashboard'; // Import MemberDashboard
+import LibrarianDashboard from './pages/LibrarianDashboard'; // Import LibrarianDashboard
+// import SignupPage from './pages/SignupPage'; // To be created
 
 function App() {
+  // Later, you'll add logic here to check if the user is authenticated
+  // and what their role is, to protect routes and redirect appropriately.
+  // For now, we'll set up the basic routes.
+
   return (
-    <> {/* You can use a Fragment or a div as the root wrapper */}
-      {/* You might add a global Navbar or Layout component here later */}
+    <>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        {/* Default route, e.g., redirect to login or show a home page */}
-        <Route path="/" element={<LoginPage />} /> {/* For now, default to login */}
-        {/* Add other routes here, e.g., /signup, /dashboard */}
+        {/* <Route path="/signup" element={<SignupPage />} /> */}
+        
+        {/* Member specific routes */}
+        {/* For now, directly accessible. Later, wrap with ProtectedRoute */}
+        <Route path="/member/dashboard" element={<MemberDashboard />} /> 
+        {/* You might have more member routes like /member/profile, /member/my-books etc. */}
+        {/* Those could be nested routes within MemberDashboard or separate top-level routes */}
+
+        {/* Librarian specific routes */}
+        {/* For now, directly accessible. Later, wrap with ProtectedRoute */}
+        <Route path="/librarian/dashboard" element={<LibrarianDashboard />} />
+        {/* You might have more librarian routes like /librarian/members, /librarian/books etc. */}
+
+        {/* Default route */}
+        {/* If not logged in, redirect to login. If logged in, redirect to appropriate dashboard. */}
+        {/* For now, let's just default to login page. */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
+        {/* Catch-all for undefined routes (optional) */}
+        <Route path="*" element={<div><h2>404 Not Found</h2><p>Sorry, the page you are looking for does not exist.</p></div>} />
       </Routes>
     </>
   );
