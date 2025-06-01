@@ -1,35 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage'; // Import your LoginPage
+// import other pages here as you create them
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <> {/* You can use a Fragment or a div as the root wrapper */}
+      {/* You might add a global Navbar or Layout component here later */}
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        {/* Default route, e.g., redirect to login or show a home page */}
+        <Route path="/" element={<LoginPage />} /> {/* For now, default to login */}
+        {/* Add other routes here, e.g., /signup, /dashboard */}
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
