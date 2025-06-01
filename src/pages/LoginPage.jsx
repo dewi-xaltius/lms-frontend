@@ -158,7 +158,7 @@ function LoginPage() {
             {loading ? 'Signing In...' : 'Sign In'}
           </Button>
           <Grid container justifyContent="flex-end">
-            <Grid item>
+            <Grid>
               <Link component={RouterLink} to="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>

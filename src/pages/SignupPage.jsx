@@ -97,7 +97,7 @@ function SignupPage() {
         
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 autoComplete="given-name"
                 name="firstName"
@@ -111,7 +111,7 @@ function SignupPage() {
                 error={!!error.includes("First name")} // Example of more specific error highlighting
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -124,7 +124,7 @@ function SignupPage() {
                 error={!!error.includes("Last name")}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 required
                 fullWidth
@@ -137,7 +137,7 @@ function SignupPage() {
                 error={!!error.includes("Username")}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 required
                 fullWidth
@@ -150,7 +150,7 @@ function SignupPage() {
                 error={!!error.includes("Email")}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 required
                 fullWidth
