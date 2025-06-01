@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import MemberDashboard from './pages/MemberDashboard'; // Import MemberDashboard
 import LibrarianDashboard from './pages/LibrarianDashboard'; // Import LibrarianDashboard
-// import SignupPage from './pages/SignupPage'; // To be created
+import SignupPage from './pages/SignupPage'; 
 
 function App() {
   // Later, you'll add logic here to check if the user is authenticated
@@ -13,6 +13,8 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/signup" element={<SignupPage />}/>
+        
         <Route path="/login" element={<LoginPage />} />
         {/* <Route path="/signup" element={<SignupPage />} /> */}
         
