@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // useNavigate for redirection after login
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -7,16 +7,14 @@ import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'; // This import is correct
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
-// We will import an authService for API calls later
-// import authService from '../services/authService';
-// We will import an AuthContext for managing auth state later
-// import { useAuth } from '../context/AuthContext';
+// Removed: import authService from '../services/authService'; // Not needed directly here anymore
+import { useAuth } from '../context/AuthContext.jsx'; // Import useAuth hook
 
 
 function Copyright(props) {
@@ -35,12 +33,13 @@ function Copyright(props) {
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('member'); // Default role
+  const [role, setRole] = useState('member'); // UI state for role selection on the form
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // Initialize useNavigate
-  // const { login } = useAuth(); // From AuthContext, to be implemented
+  // eslint-disable-next-line no-unused-vars
+  const navigate = useNavigate(); // Still needed if AuthContext doesn't handle ALL navigation
+  const { login } = useAuth(); // Get the login function from AuthContext
 
   const handleRoleChange = (event, newRole) => {
     if (newRole !== null) {
@@ -53,43 +52,27 @@ function LoginPage() {
     setError('');
     setLoading(true);
 
-    console.log({
-      username,
-      password,
-      role,
-    });
+    try {
+      // Call the login function from AuthContext.
+      // This function now handles the API call via authService,
+      // sets the user state, stores data in localStorage, and navigates.
+      // The 'role' selected on the form isn't directly passed to context's login,
+      // as the backend determines the actual roles. It's primarily for UI.
+      await login(username, password);
+      // Navigation to dashboards is now handled within the login function in AuthContext
+      // based on roles received from the backend.
+      // If specific navigation from LoginPage is still needed after context's login,
+      // it can be done here, but AuthContext should handle primary role-based redirect.
 
-    // --- Placeholder for API call ---
-    // try {
-    //   const data = await authService.login(username, password); // Role might not be needed here
-    //   login(data.token, data.user); 
-    //   navigate('/dashboard'); // Or appropriate page based on role
-    // } catch (err) {
-    //   const errorMessage = err.response?.data?.message || err.message || "Login failed. Please try again.";
-    //   setError(errorMessage);
-    //   console.error("Login error:", err);
-    // } finally {
-    //   setLoading(false);
-    // }
-    // --- End Placeholder ---
-
-    // Simulate API call for now
-    setTimeout(() => {
-      if (username === "testuser" && password === "password123") {
-        alert(`Simulated login successful as ${role} with username: ${username}`);
-        // Based on your UI mockups, members go to a profile/books/library view
-        // Librarians go to a members/books management view.
-        // We'll refine this navigation later.
-        if (role === 'member') {
-          navigate('/member/dashboard'); // Example path for member
-        } else if (role === 'librarian') {
-          navigate('/librarian/dashboard'); // Example path for librarian
-        }
-      } else {
-        setError("Invalid username or password (simulated).");
-      }
+    } catch (err) {
+      // The error thrown by AuthContext's login (which re-throws from authService)
+      // should contain a message.
+      const errorMessage = err.message || "Login failed. Please check your credentials or try again.";
+      setError(errorMessage);
+      console.error("Login page error:", err);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
