@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 function MemberDashboard() {
   // You'll fetch and display member-specific data here later
   // For now, just a placeholder
+  console.log('MemberDashboard component rendering');
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ my: 4 }}>
