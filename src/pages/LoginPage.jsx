@@ -81,9 +81,9 @@ function LoginPage() {
         // Librarians go to a members/books management view.
         // We'll refine this navigation later.
         if (role === 'member') {
-          navigate('/member/profile'); // Example path for member
+          navigate('/member/dashboard'); // Example path for member
         } else if (role === 'librarian') {
-          navigate('/librarian/members'); // Example path for librarian
+          navigate('/librarian/dashboard'); // Example path for librarian
         }
       } else {
         setError("Invalid username or password (simulated).");
