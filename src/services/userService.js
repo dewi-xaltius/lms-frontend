@@ -1,64 +1,98 @@
 import axios from 'axios';
-// We'll need a way to get the stored user token, e.g., from localStorage or AuthContext.
-// For now, let's assume a helper function or direct localStorage access.
-// A more robust way is to create an Axios instance that automatically adds the token.
 
-const API_URL = 'http://localhost:8080/api/users/'; // Base URL for user-related endpoints
+const API_BASE_URL = 'http://localhost:8080/api'; // Define a more general base
 
-// Helper function to get auth token from localStorage (example)
-// In a real app, this might come from AuthContext or a more secure storage.
 const getAuthToken = () => {
   const userString = localStorage.getItem('user');
   if (userString) {
-    const user = JSON.parse(userString);
-    return user?.token; // Assuming your stored user object has a 'token' property
+    try {
+      const user = JSON.parse(userString);
+      return user?.token;
+    } catch (e) {
+      console.error("UserService: Error parsing user from localStorage", e);
+      return null;
+    }
   }
   return null;
 };
 
-/**
- * Updates the current user's profile.
- *
- * @param {object} profileData - Object containing fields to update (firstName, lastName, email).
- * @returns {Promise<object>} A promise that resolves with the backend's response data (updated user info).
- */
 const updateMyProfile = (profileData) => {
   const token = getAuthToken();
-
   if (!token) {
-    console.error("UserService: No token found for updating profile.");
+    console.error("UserService (updateMyProfile): No token found.");
     return Promise.reject(new Error("Authentication token not found. Please log in."));
   }
-
-  // Log the data being sent and the token (for debugging, remove token log in production)
   console.log("userService.updateMyProfile: Sending data:", profileData);
-  // console.log("userService.updateMyProfile: Using token:", token); // Be careful logging tokens
-
-  return axios.put(API_URL + 'me/profile', profileData, {
+  
+  const config = {
     headers: {
-      'Authorization': `Bearer ${token}`, // Set the Authorization header
-      'Content-Type': 'application/json'  // Ensure backend expects JSON
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
-  })
+  };
+  
+  return axios.put(`${API_BASE_URL}/users/me/profile`, profileData, config)
   .then(response => {
     console.log("userService.updateMyProfile: Profile updated successfully, response data:", response.data);
-    return response.data; // This should be the updated user object from the backend
+    return response.data;
   })
   .catch(error => {
     console.error('userService.updateMyProfile error:', error.response?.data || error.message);
-    // Re-throw a more specific error message if possible, or the original error
+    console.error('userService.updateMyProfile raw error object:', error);
     throw error.response?.data || new Error('Profile update failed');
   });
 };
 
+const getAllUsers = () => {
+  const token = getAuthToken();
+  
+  console.log("userService.getAllUsers: Attempting to fetch all users.");
+  if (!token) {
+    console.error("userService.getAllUsers: No token found. Request will likely fail or be unauthenticated.");
+    return Promise.reject(new Error("Authentication token not found for getAllUsers."));
+  }
+  
+  const exactTokenForRequest = token; // Use the token we know works in Postman when logged
+  console.log("userService.getAllUsers: EXACT TOKEN BEING SENT BY FRONTEND ->", exactTokenForRequest);
 
-// You can add other user-related service functions here later, e.g.:
-// const getMyProfile = () => { ... }
-// const getUserById = (id) => { ... } // For admin viewing user profiles
+  const config = {
+    method: 'get',
+    url: `${API_BASE_URL}/users`, // Ensure this resolves to http://localhost:8080/api/users
+    headers: { 
+      'Authorization': `Bearer ${exactTokenForRequest}`,
+      'Content-Type': 'application/json' // Usually not strictly needed for GET, but doesn't hurt
+    }
+    // You could also add withCredentials: true here if you were dealing with cookies,
+    // but for Bearer tokens it's typically not required.
+  };
+
+  console.log("userService.getAllUsers: Axios request config:", config);
+
+  return axios(config) // Use the more generic axios(config) call
+  .then(response => {
+    console.log("userService.getAllUsers: Users fetched successfully, HTTP Status:", response.status, "Count:", response.data?.length);
+    return response.data;
+  })
+  .catch(error => {
+    console.error('--- userService.getAllUsers Full Error Object ---', error);
+    if (error.response) {
+      console.error('userService.getAllUsers Error Data:', error.response.data);
+      console.error('userService.getAllUsers Error Status:', error.response.status);
+      console.error('userService.getAllUsers Error Headers:', error.response.headers);
+      throw error.response.data || new Error(`Request failed with status ${error.response.status}`);
+    } else if (error.request) {
+      console.error('userService.getAllUsers No response received, request object:', error.request);
+      throw new Error('No response from server. Please check network connection.');
+    } else {
+      console.error('userService.getAllUsers Request setup error message:', error.message);
+      throw new Error('Error setting up request: ' + error.message);
+    }
+  });
+};
 
 const userService = {
   updateMyProfile,
-  // getMyProfile,
+  getAllUsers,
 };
 
 export default userService;
